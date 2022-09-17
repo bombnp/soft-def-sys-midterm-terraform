@@ -13,11 +13,10 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_instance" "app_server" {
-  ami           = var.ami
-  instance_type = var.instance_type
+module "ec2-instances" {
+  source = "./modules/ec2-instances"
 
-  tags = {
-    Name = "ExampleAppServerInstance"
-  }
+  ami               = var.ami
+  availability_zone = var.availability_zone
+  instance_type     = var.instance_type
 }
