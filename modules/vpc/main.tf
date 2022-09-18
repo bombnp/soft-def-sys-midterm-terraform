@@ -6,6 +6,32 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "sds-midterm-igw"
+  }
+}
+
+resource "aws_route_table" "rtb" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "sds-midterm-rtb"
+  }
+}
+
+resource "aws_main_route_table_association" "main_rtb" {
+  vpc_id         = aws_vpc.vpc.id
+  route_table_id = aws_route_table.rtb.id
+}
+
 module "internal" {
   source = "./subnets/internal"
 
