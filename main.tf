@@ -13,8 +13,14 @@ provider "aws" {
   region = var.region
 }
 
-module "ec2-instances" {
-  source = "./modules/ec2-instances"
+module "vpc" {
+  source = "./modules/vpc"
+
+  availability_zone = var.availability_zone
+}
+
+module "ec2_instances" {
+  source = "./modules/ec2_instances"
 
   ami               = var.ami
   availability_zone = var.availability_zone
