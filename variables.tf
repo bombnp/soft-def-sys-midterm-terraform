@@ -41,12 +41,6 @@ variable "database_pass" {
   type        = string
 }
 
-variable "database_port" {
-  description = "Port for the database"
-  type        = number
-  default     = 3306
-}
-
 variable "admin_user" {
   description = "Name of the admin user"
   type        = string

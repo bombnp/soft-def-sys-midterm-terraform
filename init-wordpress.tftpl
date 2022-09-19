@@ -1,0 +1,63 @@
+#!/bin/bash
+# setup public key TODO: remove this
+tee -a /home/ubuntu/.ssh/authorized_keys << EOF
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFIgNG2Y7ktttcQVKdgj+uoxT0GQpMMQjPlZ19GQ2onR bombnp@Nuts-MacBook-Air.local
+EOF
+
+# install dependencies
+sudo apt update
+sudo apt install -y nginx php-cli php-fpm php-mysql php-json php-opcache php-mbstring php-xml php-gd php-curl
+
+# install wordpress
+sudo mkdir -p /var/www/html
+curl https://wordpress.org/latest.tar.gz | sudo tar zx -C /var/www/html
+sudo chown -R www-data: /var/www/html
+
+# add nginx config
+sudo tee /etc/nginx/sites-available/wordpress << EOF
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  server_name _;
+
+  root /var/www/html/wordpress;
+  index index.php;
+
+  # log files
+  access_log /var/log/nginx/wordpress.access.log;
+  error_log /var/log/nginx/wordpress.error.log;
+
+  location / {
+    try_files \$uri \$uri/ /index.php?\$args;
+  }
+
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+  }
+
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+    expires max;
+    log_not_found off;
+  }
+}
+EOF
+sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
+sudo unlink /etc/nginx/sites-enabled/default
+sudo systemctl restart nginx
+
+# configure wordpress
+sudo -u www-data cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+sudo -u www-data sed -i "s/database_name_here/${database_name}/" /var/www/html/wordpress/wp-config.php
+sudo -u www-data sed -i "s/username_here/${database_user}/" /var/www/html/wordpress/wp-config.php
+sudo -u www-data sed -i "s/password_here/${database_pass}/" /var/www/html/wordpress/wp-config.php
+sudo -u www-data sed -i "s/localhost/${database_host}/" /var/www/html/wordpress/wp-config.php
+
+# set auth keys and salts with wordpress' salt generator
+SALTS=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
+while read -r SALT; do
+SEARCH="define( '$(echo "$SALT" | cut -d "'" -f 2)"
+REPLACE=$(echo "$SALT" | cut -d "'" -f 4)
+sudo sed -i "/^$SEARCH/s/put your unique phrase here/$(echo $REPLACE | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" /var/www/html/wordpress/wp-config.php
+done <<< "$SALTS"

@@ -25,9 +25,17 @@ module "ec2_instances" {
   ami               = var.ami
   availability_zone = var.availability_zone
   instance_type     = var.instance_type
+
+  database_name = var.database_name
+  database_user = var.database_user
+  database_pass = var.database_pass
 }
 
 # TODO: temporary, remove this later
+output "web_server_public_ip" {
+  value = module.ec2_instances.web_server_public_ip
+}
+
 output "db_server_public_ip" {
   value = module.ec2_instances.db_server_public_ip
 }
