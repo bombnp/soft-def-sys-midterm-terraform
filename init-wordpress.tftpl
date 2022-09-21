@@ -6,12 +6,21 @@ EOF
 
 # install dependencies
 sudo apt update
-sudo apt install -y nginx php-cli php-fpm php-mysql php-json php-opcache php-mbstring php-xml php-gd php-curl
+sudo apt install -y nginx php-cli php-fpm php-mysql php-json php-opcache php-mbstring php-xml php-gd php-curl mariadb-client-core-10.3
 
-# install wordpress
+# install wordpress CLI
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
+
+# install wordpress core via CLI
 sudo mkdir -p /var/www/html
-curl https://wordpress.org/latest.tar.gz | sudo tar zx -C /var/www/html
-sudo chown -R www-data: /var/www/html
+sudo chown -R www-data: /var/www
+sudo -u www-data wp core download --path=/var/www/html
+sudo -u www-data wp config create --dbname=${database_name} --dbuser=${database_user} --dbpass=${database_pass} --dbhost=${database_host} --path=/var/www/html --extra-php <<PHP
+define('FS_METHOD', 'direct' );
+define('WP_MEMORY_LIMIT', '128M');
+PHP
 
 # add nginx config
 sudo tee /etc/nginx/sites-available/wordpress << EOF
@@ -21,7 +30,7 @@ server {
 
   server_name _;
 
-  root /var/www/html/wordpress;
+  root /var/www/html;
   index index.php;
 
   # log files
@@ -47,17 +56,5 @@ sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
 sudo unlink /etc/nginx/sites-enabled/default
 sudo systemctl restart nginx
 
-# configure wordpress
-sudo -u www-data cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
-sudo -u www-data sed -i "s/database_name_here/${database_name}/" /var/www/html/wordpress/wp-config.php
-sudo -u www-data sed -i "s/username_here/${database_user}/" /var/www/html/wordpress/wp-config.php
-sudo -u www-data sed -i "s/password_here/${database_pass}/" /var/www/html/wordpress/wp-config.php
-sudo -u www-data sed -i "s/localhost/${database_host}/" /var/www/html/wordpress/wp-config.php
-
-# set auth keys and salts with wordpress' salt generator
-SALTS=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
-while read -r SALT; do
-SEARCH="define( '$(echo "$SALT" | cut -d "'" -f 2)"
-REPLACE=$(echo "$SALT" | cut -d "'" -f 4)
-sudo sed -i "/^$SEARCH/s/put your unique phrase here/$(echo $REPLACE | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" /var/www/html/wordpress/wp-config.php
-done <<< "$SALTS"
+# complete 5-minute wordpress install
+wp core install --path=/var/www/html --url=${site_url} --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email
