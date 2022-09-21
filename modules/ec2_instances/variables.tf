@@ -29,3 +29,13 @@ variable "database_pass" {
   description = "Password for the database user"
   type        = string
 }
+
+variable "admin_user" {
+  description = "Admin user for WordPress"
+  type        = string
+}
+
+variable "admin_pass" {
+  description = "Admin password for WordPress"
+  type        = string
+}

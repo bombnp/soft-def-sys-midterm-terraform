@@ -22,6 +22,10 @@ define('FS_METHOD', 'direct' );
 define('WP_MEMORY_LIMIT', '128M');
 PHP
 
+# complete 5-minute wordpress install
+# TODO: change --url to elastic ip
+sudo -u www-data wp core install --path=/var/www/html --url="/wp-admin" --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email
+
 # add nginx config
 sudo tee /etc/nginx/sites-available/wordpress << EOF
 server {
@@ -56,5 +60,3 @@ sudo ln -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/
 sudo unlink /etc/nginx/sites-enabled/default
 sudo systemctl restart nginx
 
-# complete 5-minute wordpress install
-wp core install --path=/var/www/html --url=${site_url} --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email

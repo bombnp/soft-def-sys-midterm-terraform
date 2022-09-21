@@ -10,6 +10,8 @@ resource "aws_instance" "web_server" {
     database_user = var.database_user
     database_pass = var.database_pass
     database_host = aws_instance.db_server.private_ip
+    admin_user    = var.admin_user
+    admin_pass    = var.admin_pass
   })
 
   tags = {

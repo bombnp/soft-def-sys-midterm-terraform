@@ -29,6 +29,8 @@ module "ec2_instances" {
   database_name = var.database_name
   database_user = var.database_user
   database_pass = var.database_pass
+  admin_user    = var.admin_user
+  admin_pass    = var.admin_pass
 }
 
 # TODO: temporary, remove this later
