@@ -43,6 +43,12 @@ module "internal" {
 module "db_private" {
   source = "./subnets/db_private"
 
+  # TODO: remove this since db does not need EIP
+  # explicit dependency is needed for the EIP to wait for IGW
+  depends_on = [
+    aws_internet_gateway.igw
+  ]
+
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.1.0/24"
   availability_zone = var.availability_zone
@@ -56,6 +62,11 @@ module "db_private" {
 
 module "web_public" {
   source = "./subnets/web_public"
+
+  # explicit dependency is needed for the EIP to wait for IGW
+  depends_on = [
+    aws_internet_gateway.igw
+  ]
 
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.2.0/24"

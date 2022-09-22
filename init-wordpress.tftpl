@@ -1,4 +1,8 @@
 #!/bin/bash
+# save output to log file
+exec > home/ubuntu/init.log                                                                
+exec 2>&1
+
 # setup public key TODO: remove this
 tee -a /home/ubuntu/.ssh/authorized_keys << EOF
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFIgNG2Y7ktttcQVKdgj+uoxT0GQpMMQjPlZ19GQ2onR bombnp@Nuts-MacBook-Air.local
@@ -21,10 +25,15 @@ sudo -u www-data wp config create --dbname=${database_name} --dbuser=${database_
 define('FS_METHOD', 'direct' );
 define('WP_MEMORY_LIMIT', '128M');
 PHP
+if [ $? -eq 0 ]; then
+  echo "Wordpress installed successfully"
+else
+  echo "Wordpress installation failed"
+  exit 1
+fi
 
 # complete 5-minute wordpress install
-# TODO: change --url to elastic ip
-sudo -u www-data wp core install --path=/var/www/html --url="/wp-admin" --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email
+sudo -u www-data wp core install --path=/var/www/html --url=${web_public_ip} --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email
 
 # add nginx config
 sudo tee /etc/nginx/sites-available/wordpress << EOF

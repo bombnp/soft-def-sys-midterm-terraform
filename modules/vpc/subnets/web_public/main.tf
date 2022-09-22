@@ -52,7 +52,20 @@ resource "aws_network_interface" "web_public" {
   }
 }
 
+resource "aws_eip" "web_eip" {
+  vpc               = true
+  network_interface = aws_network_interface.web_public.id
+
+  tags = {
+    Name = "sds-midterm-eip-web"
+  }
+}
+
 resource "aws_instance" "web_server" {
+  depends_on = [
+    aws_eip.web_eip
+  ]
+
   ami               = var.ami
   instance_type     = var.instance_type
   availability_zone = var.availability_zone
@@ -63,6 +76,7 @@ resource "aws_instance" "web_server" {
   }
 
   user_data = templatefile("init-wordpress.tftpl", {
+    web_public_ip = aws_eip.web_eip.public_ip
     database_name = var.database_name
     database_user = var.database_user
     database_pass = var.database_pass
@@ -72,7 +86,7 @@ resource "aws_instance" "web_server" {
   })
 
   tags = {
-    Name = "Web Server"
+    Name = "sds-midterm-web-server"
   }
 }
 

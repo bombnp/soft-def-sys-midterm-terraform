@@ -44,7 +44,7 @@ resource "aws_security_group" "sg_db" {
 }
 
 resource "aws_network_interface" "db_private" {
-  subnet_id = aws_subnet.db_private.id
+  subnet_id       = aws_subnet.db_private.id
   security_groups = [aws_security_group.sg_db.id]
 
   tags = {
@@ -52,7 +52,22 @@ resource "aws_network_interface" "db_private" {
   }
 }
 
+# TODO: remove this later
+resource "aws_eip" "db_eip" {
+  vpc               = true
+  network_interface = aws_network_interface.db_private.id
+
+  tags = {
+    Name = "sds-midterm-eip-db"
+  }
+}
+
 resource "aws_instance" "db_server" {
+  # TODO: remove this later
+  depends_on = [
+    aws_eip.db_eip
+  ]
+
   ami               = var.ami
   instance_type     = var.instance_type
   availability_zone = var.availability_zone
@@ -69,7 +84,7 @@ resource "aws_instance" "db_server" {
   })
 
   tags = {
-    Name = "DB Server"
+    Name = "sds-midterm-db-server"
   }
 }
 
