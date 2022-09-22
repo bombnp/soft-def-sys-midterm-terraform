@@ -93,6 +93,11 @@ resource "aws_instance" "web_server" {
     device_index         = 0
   }
 
+  network_interface {
+    network_interface_id = var.internal_eni_id
+    device_index         = 1
+  }
+
   user_data = templatefile("init-wordpress.tftpl", {
     web_public_ip = aws_eip.web_eip.public_ip
     database_name = var.database_name

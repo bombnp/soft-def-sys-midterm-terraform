@@ -23,3 +23,11 @@ resource "aws_network_interface" "internal_db" {
     Name = "sds-midterm-eni-internal-db"
   }
 }
+
+output "internal_web_eni_id" {
+  value = aws_network_interface.internal_web.id
+}
+
+output "internal_db_eni_id" {
+  value = aws_network_interface.internal_db.id
+}

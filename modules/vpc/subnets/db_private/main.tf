@@ -95,6 +95,11 @@ resource "aws_instance" "db_server" {
     device_index         = 0
   }
 
+  network_interface {
+    network_interface_id = var.internal_eni_id
+    device_index         = 1
+  }
+
   user_data = templatefile("init-db.tftpl", {
     database_name = var.database_name
     database_user = var.database_user

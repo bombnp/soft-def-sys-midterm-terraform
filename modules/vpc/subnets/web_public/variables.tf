@@ -18,6 +18,11 @@ variable "igw_id" {
   type        = string
 }
 
+variable "internal_eni_id" {
+  description = "Internal ENI ID"
+  type        = string
+}
+
 variable "ami" {
   description = "AMI ID"
   type        = string

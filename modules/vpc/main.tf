@@ -35,6 +35,7 @@ module "db_private" {
   cidr_block        = "172.16.1.0/24"
   availability_zone = var.availability_zone
   igw_id            = aws_internet_gateway.igw.id
+  internal_eni_id   = module.internal.internal_db_eni_id
   ami               = var.ami
   instance_type     = var.instance_type
 
@@ -55,6 +56,7 @@ module "web_public" {
   cidr_block        = "172.16.2.0/24"
   availability_zone = var.availability_zone
   igw_id            = aws_internet_gateway.igw.id
+  internal_eni_id   = module.internal.internal_web_eni_id
   ami               = var.ami
   instance_type     = var.instance_type
 
