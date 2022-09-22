@@ -13,6 +13,11 @@ variable "availability_zone" {
   type        = string
 }
 
+variable "igw_id" {
+  description = "Internet gateway ID"
+  type        = string
+}
+
 variable "ami" {
   description = "AMI ID"
   type        = string

@@ -8,6 +8,24 @@ resource "aws_subnet" "web_public" {
   }
 }
 
+resource "aws_route_table" "web_rtb" {
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = var.igw_id
+  }
+
+  tags = {
+    Name = "sds-midterm-web-rtb"
+  }
+}
+
+resource "aws_route_table_association" "web_rtb" {
+  subnet_id      = aws_subnet.web_public.id
+  route_table_id = aws_route_table.web_rtb.id
+}
+
 # TODO: remove 22?
 resource "aws_security_group" "sg_web" {
   name        = "sg_web"

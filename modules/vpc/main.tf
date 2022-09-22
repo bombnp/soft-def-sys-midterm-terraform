@@ -14,24 +14,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_route_table" "rtb" {
-  vpc_id = aws_vpc.vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
-  tags = {
-    Name = "sds-midterm-rtb"
-  }
-}
-
-resource "aws_main_route_table_association" "main_rtb" {
-  vpc_id         = aws_vpc.vpc.id
-  route_table_id = aws_route_table.rtb.id
-}
-
 module "internal" {
   source = "./subnets/internal"
 
@@ -52,6 +34,7 @@ module "db_private" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.1.0/24"
   availability_zone = var.availability_zone
+  igw_id            = aws_internet_gateway.igw.id
   ami               = var.ami
   instance_type     = var.instance_type
 
@@ -71,6 +54,7 @@ module "web_public" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.2.0/24"
   availability_zone = var.availability_zone
+  igw_id            = aws_internet_gateway.igw.id
   ami               = var.ami
   instance_type     = var.instance_type
 

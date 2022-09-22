@@ -8,6 +8,24 @@ resource "aws_subnet" "db_private" {
   }
 }
 
+resource "aws_route_table" "db_rtb" {
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = var.igw_id
+  }
+
+  tags = {
+    Name = "sds-midterm-db-rtb"
+  }
+}
+
+resource "aws_route_table_association" "db_rtb" {
+  subnet_id      = aws_subnet.db_private.id
+  route_table_id = aws_route_table.db_rtb.id
+}
+
 # TODO: restrict db access to our subnet only
 resource "aws_security_group" "sg_db" {
   name        = "sg_db"
