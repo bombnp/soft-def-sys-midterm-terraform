@@ -13,6 +13,11 @@ provider "aws" {
   region = var.region
 }
 
+module "s3" {
+  source = "./modules/s3"
+
+  bucket_name = var.bucket_name
+}
 module "vpc" {
   source = "./modules/vpc"
 
@@ -26,6 +31,9 @@ module "vpc" {
 
   admin_user = var.admin_user
   admin_pass = var.admin_pass
+
+  iam_s3_access_key = module.s3.iam_s3_access_key
+  iam_s3_secret_key = module.s3.iam_s3_secret_key
 }
 
 # TODO: temporary, remove this later

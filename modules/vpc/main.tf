@@ -67,6 +67,9 @@ module "web_public" {
 
   admin_user = var.admin_user
   admin_pass = var.admin_pass
+
+  iam_s3_access_key = var.iam_s3_access_key
+  iam_s3_secret_key = var.iam_s3_secret_key
 }
 
 # TODO: temporary, remove this later

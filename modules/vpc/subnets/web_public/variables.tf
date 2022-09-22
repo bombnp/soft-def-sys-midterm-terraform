@@ -63,3 +63,13 @@ variable "admin_pass" {
   description = "Admin password for WordPress"
   type        = string
 }
+
+variable "iam_s3_access_key" {
+  description = "IAM access key for S3"
+  type        = string
+}
+
+variable "iam_s3_secret_key" {
+  description = "IAM secret key for S3"
+  type        = string
+}
