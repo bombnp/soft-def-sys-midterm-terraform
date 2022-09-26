@@ -46,3 +46,7 @@ output "web_server_public_ip" {
 output "db_server_public_ip" {
   value = module.vpc.db_server_public_ip
 }
+
+output "db_server_internal_ip" {
+  value = module.vpc.db_server_internal_ip
+}

@@ -47,9 +47,10 @@ module "db_private" {
 module "web_public" {
   source = "./subnets/web_public"
 
-  # explicit dependency is needed for the EIP to wait for IGW
+  # explicit dependency is needed for the EIP to wait for IGW. Also wait for db module
   depends_on = [
-    aws_internet_gateway.igw
+    aws_internet_gateway.igw,
+    module.db_private
   ]
 
   vpc_id            = aws_vpc.vpc.id
@@ -63,7 +64,7 @@ module "web_public" {
   database_name = var.database_name
   database_user = var.database_user
   database_pass = var.database_pass
-  database_host = module.db_private.db_server_private_ip
+  database_host = module.internal.internal_db_private_ip
 
   admin_user = var.admin_user
   admin_pass = var.admin_pass
@@ -81,4 +82,8 @@ output "web_server_public_ip" {
 
 output "db_server_public_ip" {
   value = module.db_private.db_server_public_ip
+}
+
+output "db_server_internal_ip" {
+  value = module.internal.internal_db_private_ip
 }

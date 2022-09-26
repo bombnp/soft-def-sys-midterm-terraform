@@ -31,3 +31,7 @@ output "internal_web_eni_id" {
 output "internal_db_eni_id" {
   value = aws_network_interface.internal_db.id
 }
+
+output "internal_db_private_ip" {
+  value = aws_network_interface.internal_db.private_ip
+}
