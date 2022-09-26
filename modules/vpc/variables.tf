@@ -4,6 +4,30 @@ variable "cidr_block" {
   default     = "172.16.0.0/16"
 }
 
+variable "internal_cidr_block" {
+  description = "CIDR block for the internal network"
+  type        = string
+  default     = "172.16.0.0/24"
+}
+
+variable "db_cidr_block" {
+  description = "CIDR block for the database network"
+  type        = string
+  default     = "172.16.1.0/24"
+}
+
+variable "web_cidr_block" {
+  description = "CIDR block for the web network"
+  type        = string
+  default     = "172.16.2.0/24"
+}
+
+variable "nat_cidr_block" {
+  description = "CIDR block for the NAT network"
+  type        = string
+  default     = "172.16.3.0/24"
+}
+
 variable "availability_zone" {
   description = "AWS availability zone"
   type        = string

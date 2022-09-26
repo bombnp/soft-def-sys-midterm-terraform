@@ -1,5 +1,5 @@
 resource "aws_vpc" "vpc" {
-  cidr_block = "172.16.0.0/16"
+  cidr_block = var.cidr_block
 
   tags = {
     Name = "sds-midterm-vpc"
@@ -14,30 +14,34 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+module "nat" {
+  source = "./nat"
+
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.nat_cidr_block
+  availability_zone = var.availability_zone
+  igw_id            = aws_internet_gateway.igw.id
+}
+
 module "internal" {
   source = "./subnets/internal"
 
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "172.16.0.0/24"
+  cidr_block        = var.internal_cidr_block
   availability_zone = var.availability_zone
 }
 
 module "db_private" {
   source = "./subnets/db_private"
 
-  # TODO: remove this since db does not need EIP
-  # explicit dependency is needed for the EIP to wait for IGW
-  depends_on = [
-    aws_internet_gateway.igw
-  ]
-
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "172.16.1.0/24"
-  availability_zone = var.availability_zone
-  igw_id            = aws_internet_gateway.igw.id
-  internal_eni_id   = module.internal.internal_db_eni_id
-  ami               = var.ami
-  instance_type     = var.instance_type
+  vpc_id                       = aws_vpc.vpc.id
+  cidr_block                   = var.db_cidr_block
+  availability_zone            = var.availability_zone
+  ngw_id                       = module.nat.ngw_id
+  internal_eni_id              = module.internal.internal_db_eni_id
+  inbound_db_access_cidr_block = var.web_cidr_block
+  ami                          = var.ami
+  instance_type                = var.instance_type
 
   database_name = var.database_name
   database_user = var.database_user
@@ -54,7 +58,7 @@ module "web_public" {
   ]
 
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "172.16.2.0/24"
+  cidr_block        = var.web_cidr_block
   availability_zone = var.availability_zone
   igw_id            = aws_internet_gateway.igw.id
   internal_eni_id   = module.internal.internal_web_eni_id
@@ -78,10 +82,6 @@ module "web_public" {
 # TODO: temporary, remove this later
 output "web_server_public_ip" {
   value = module.web_public.web_server_public_ip
-}
-
-output "db_server_public_ip" {
-  value = module.db_private.db_server_public_ip
 }
 
 output "db_server_internal_ip" {

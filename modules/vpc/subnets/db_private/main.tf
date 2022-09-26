@@ -12,8 +12,8 @@ resource "aws_route_table" "db_rtb" {
   vpc_id = var.vpc_id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = var.igw_id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = var.ngw_id
   }
 
   tags = {
@@ -26,7 +26,6 @@ resource "aws_route_table_association" "db_rtb" {
   route_table_id = aws_route_table.db_rtb.id
 }
 
-# TODO: restrict db access to our subnet only
 resource "aws_security_group" "sg_db" {
   name        = "sg_db"
   description = "Security group for the database"
@@ -37,7 +36,8 @@ resource "aws_security_group" "sg_db" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.inbound_db_access_cidr_block]
+
   }
 
   ingress {
@@ -70,22 +70,7 @@ resource "aws_network_interface" "db_private" {
   }
 }
 
-# TODO: remove this later
-resource "aws_eip" "db_eip" {
-  vpc               = true
-  network_interface = aws_network_interface.db_private.id
-
-  tags = {
-    Name = "sds-midterm-eip-db"
-  }
-}
-
 resource "aws_instance" "db_server" {
-  # TODO: remove this later
-  depends_on = [
-    aws_eip.db_eip
-  ]
-
   ami               = var.ami
   instance_type     = var.instance_type
   availability_zone = var.availability_zone
@@ -113,8 +98,4 @@ resource "aws_instance" "db_server" {
 
 output "db_server_private_ip" {
   value = aws_instance.db_server.private_ip
-}
-
-output "db_server_public_ip" {
-  value = aws_instance.db_server.public_ip
 }

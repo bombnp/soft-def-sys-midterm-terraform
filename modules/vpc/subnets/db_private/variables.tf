@@ -13,13 +13,18 @@ variable "availability_zone" {
   type        = string
 }
 
-variable "igw_id" {
-  description = "Internet gateway ID"
+variable "ngw_id" {
+  description = "NAT gateway ID"
   type        = string
 }
 
 variable "internal_eni_id" {
   description = "Internal ENI ID"
+  type        = string
+}
+
+variable "inbound_db_access_cidr_block" {
+  description = "CIDR block for inbound database access"
   type        = string
 }
 
