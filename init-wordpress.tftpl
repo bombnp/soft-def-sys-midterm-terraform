@@ -24,6 +24,16 @@ sudo -u www-data wp core download --path=/var/www/html
 sudo -u www-data wp config create --dbname=${database_name} --dbuser=${database_user} --dbpass=${database_pass} --dbhost=${database_host} --path=/var/www/html --extra-php <<PHP
 define('FS_METHOD', 'direct' );
 define('WP_MEMORY_LIMIT', '128M');
+define( 'AS3CF_SETTINGS', serialize(array(
+    'provider' => 'aws',
+    'access-key-id' => '${iam_s3_access_key}',
+    'secret-access-key' => '${iam_s3_secret_key}',
+    'bucket' => '${bucket_name}',
+    'copy-to-s3' => true,
+    'delivery-provider' => 'storage',
+    'serve-from-s3' => true,
+    'remove-local-file' => true
+)));
 PHP
 if [ $? -eq 0 ]; then
   echo "Wordpress installed successfully"
@@ -34,6 +44,9 @@ fi
 
 # complete 5-minute wordpress install
 sudo -u www-data wp core install --path=/var/www/html --url=${web_public_ip} --title="SDS Midterm" --admin_user=${admin_user} --admin_password=${admin_pass} --admin_email=bomb.np@gmail.com --skip-email
+
+# install wp offload plugin
+sudo -u www-data wp plugin install amazon-s3-and-cloudfront --activate --path=/var/www/html
 
 # add nginx config
 sudo tee /etc/nginx/sites-available/wordpress << EOF

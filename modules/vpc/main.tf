@@ -70,6 +70,7 @@ module "web_public" {
 
   iam_s3_access_key = var.iam_s3_access_key
   iam_s3_secret_key = var.iam_s3_secret_key
+  bucket_name       = var.bucket_name
 }
 
 # TODO: temporary, remove this later

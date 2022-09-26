@@ -73,3 +73,8 @@ variable "iam_s3_secret_key" {
   description = "IAM secret key for S3"
   type        = string
 }
+
+variable "bucket_name" {
+  description = "S3 bucket name"
+  type        = string
+}

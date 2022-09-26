@@ -99,13 +99,16 @@ resource "aws_instance" "web_server" {
   }
 
   user_data = templatefile("init-wordpress.tftpl", {
-    web_public_ip = aws_eip.web_eip.public_ip
-    database_name = var.database_name
-    database_user = var.database_user
-    database_pass = var.database_pass
-    database_host = var.database_host
-    admin_user    = var.admin_user
-    admin_pass    = var.admin_pass
+    web_public_ip     = aws_eip.web_eip.public_ip
+    database_name     = var.database_name
+    database_user     = var.database_user
+    database_pass     = var.database_pass
+    database_host     = var.database_host
+    admin_user        = var.admin_user
+    admin_pass        = var.admin_pass
+    iam_s3_access_key = var.iam_s3_access_key
+    iam_s3_secret_key = var.iam_s3_secret_key
+    bucket_name       = var.bucket_name
   })
 
   tags = {
