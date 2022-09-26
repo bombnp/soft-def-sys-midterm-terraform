@@ -35,6 +35,7 @@ module "vpc" {
   iam_s3_access_key = module.s3.iam_s3_access_key
   iam_s3_secret_key = module.s3.iam_s3_secret_key
   bucket_name       = var.bucket_name
+  bucket_region     = var.region
 }
 
 # TODO: temporary, remove this later

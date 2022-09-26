@@ -1,13 +1,11 @@
 variable "region" {
   description = "AWS region"
   type        = string
-  default     = "us-west-2"
 }
 
 variable "availability_zone" {
   description = "AWS availability zone"
   type        = string
-  default     = "us-west-2ax"
 }
 
 variable "ami" {

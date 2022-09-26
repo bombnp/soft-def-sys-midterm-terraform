@@ -59,3 +59,8 @@ variable "bucket_name" {
   description = "S3 bucket name"
   type        = string
 }
+
+variable "bucket_region" {
+  description = "S3 bucket region"
+  type        = string
+}
