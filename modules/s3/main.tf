@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name
+  force_destroy = true
 
   tags = {
     Name = "sds-midterm-s3-bucket"
@@ -29,7 +30,7 @@ resource "aws_iam_user_policy" "s3" {
 data "aws_iam_policy_document" "s3" {
   statement {
     actions   = ["s3:*"]
-    resources = [aws_s3_bucket.bucket.arn]
+    resources = [aws_s3_bucket.bucket.arn, "${aws_s3_bucket.bucket.arn}/*"]
     effect    = "Allow"
   }
 }
