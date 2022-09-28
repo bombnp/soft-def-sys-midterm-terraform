@@ -1,10 +1,6 @@
 resource "aws_s3_bucket" "bucket" {
   bucket        = var.bucket_name
   force_destroy = true
-
-  tags = {
-    Name = "sds-midterm-s3-bucket"
-  }
 }
 
 resource "aws_s3_bucket_acl" "acl" {
