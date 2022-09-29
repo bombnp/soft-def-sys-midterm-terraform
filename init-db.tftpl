@@ -2,7 +2,7 @@
 # save output to log file
 exec > /home/ubuntu/init.log                                                                
 exec 2>&1
-# setup public key TODO: remove this
+# setup public key for ssh
 tee -a /home/ubuntu/.ssh/authorized_keys << EOF
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFIgNG2Y7ktttcQVKdgj+uoxT0GQpMMQjPlZ19GQ2onR bombnp@Nuts-MacBook-Air.local
 EOF

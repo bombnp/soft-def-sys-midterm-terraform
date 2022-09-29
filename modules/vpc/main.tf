@@ -79,11 +79,7 @@ module "web_public" {
   bucket_region     = var.bucket_region
 }
 
-# TODO: temporary, remove this later
 output "web_server_public_ip" {
   value = module.web_public.web_server_public_ip
 }
 
-output "db_server_internal_ip" {
-  value = module.internal.internal_db_private_ip
-}

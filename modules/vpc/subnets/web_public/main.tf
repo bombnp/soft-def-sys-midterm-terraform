@@ -26,7 +26,6 @@ resource "aws_route_table_association" "web_rtb" {
   route_table_id = aws_route_table.web_rtb.id
 }
 
-# TODO: remove 22?
 resource "aws_security_group" "sg_web" {
   name        = "sg_web"
   description = "Security group for the web server"
@@ -117,7 +116,6 @@ resource "aws_instance" "web_server" {
   }
 }
 
-# TODO: remove this later
 output "web_server_public_ip" {
   value = aws_instance.web_server.public_ip
 }
