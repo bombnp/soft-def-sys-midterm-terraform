@@ -1,0 +1,9 @@
+region            = "us-west-2"
+availability_zone = "us-west-2a"
+ami               = "ami-0ddf424f81ddb0720" # NOTE: different regions have different AMIs
+bucket_name       = "bombnp-sds-midterm.us-west-2"
+database_name     = "wordpressdb"
+database_user     = "wpuser"
+database_pass     = "wppass"
+admin_user        = "adminuser"
+admin_pass        = "adminpass"
