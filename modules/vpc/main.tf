@@ -39,7 +39,7 @@ module "db_private" {
   availability_zone            = var.availability_zone
   ngw_id                       = module.nat.ngw_id
   internal_eni_id              = module.internal.internal_db_eni_id
-  inbound_db_access_cidr_block = var.web_cidr_block
+  inbound_db_access_cidr_block = var.internal_cidr_block
   ami                          = var.ami
   instance_type                = var.instance_type
 
